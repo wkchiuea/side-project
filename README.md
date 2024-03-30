@@ -1,2 +1,2 @@
-# side-project
-Repository for building side project
+# side-projects
+Repository for building side projects
