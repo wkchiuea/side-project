@@ -39,7 +39,7 @@ def login():
 
     return render_template('login.html', form=form)
 
-@uesrs.route('/account', methods=['GET', 'POST'])
+@users.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateUserForm()

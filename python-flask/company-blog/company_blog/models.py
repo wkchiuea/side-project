@@ -28,13 +28,15 @@ class User(db.Model, UserMixin):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(password, self.password_hash)
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f"User: '{self.username}', '{self.email}'"
 
 
-class BlogPost():
+class BlogPost(db.Model):
+
+    __tablename__ = 'blog_posts'
 
     users = db.relationship(User)
 
