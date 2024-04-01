@@ -1,3 +1,8 @@
+# IDE
 .idea/
 
+# Python
 *__pycache__*
+
+# Kafka
+*/playground.config
