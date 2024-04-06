@@ -37,7 +37,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
         return;
     }
 
-    const userDocRef = doc(db, 'users', userAuth.id);
+    const userDocRef = doc(db, 'users', userAuth.uid);
 
     const userSnapshot = await getDoc(userDocRef);
 
@@ -64,11 +64,11 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 
 
 // add create user with email and password
-export const createAuthUserWithEmailAndPasswowrd = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
     if (!email || !password) {
         return;
     }
 
-    return await createUserWithEmailAndPassword(email, password);
+    return await createUserWithEmailAndPassword(auth, email, password);
 }
 
