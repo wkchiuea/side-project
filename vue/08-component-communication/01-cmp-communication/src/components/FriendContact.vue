@@ -1,15 +1,15 @@
 <template>
   <li>
-    <h2>{{ friend.name }}</h2>
+    <h2>{{ name }}</h2>
     <button @click="toggleDetails">{{ detailsAreVisible ? 'Hide' : 'Show' }} Details</button>
     <ul v-if="detailsAreVisible">
       <li>
         <strong>Phone:</strong>
-        {{ friend.phone }}
+        {{ phoneNumber }}
       </li>
       <li>
         <strong>Email:</strong>
-        {{ friend.email }}
+        {{ email }}
       </li>
     </ul>
   </li>
@@ -17,15 +17,33 @@
 
 <script>
 export default {
+  // props: ["name", "phoneNumber", "email"],
+  // props: {
+  //   name: String,
+  //   phoneNumber: String,
+  //   email: String,
+  // },
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: false,
+      default: "xxx@haha.com",
+      // validator: function(value) {
+      //   return value === "xxx@haha.com" || value === "yyy@haha.com"; // show warning in console
+      // }
+    }
+  },
   data() {
     return {
       detailsAreVisible: false,
-      friend: {
-        id: "manuel",
-        name: "Manuel Lorenz",
-        phone: "0123 45678 90",
-        email: "manuel@localhost.com",
-      },
     };
   },
   methods: {
