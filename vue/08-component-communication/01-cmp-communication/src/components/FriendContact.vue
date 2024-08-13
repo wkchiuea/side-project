@@ -51,6 +51,17 @@ export default {
       default: false
     }
   },
+  // events: ["toggle-favorite"],
+  events: {
+    "toggle-favorite": function(id) {
+      if (id) {
+        return true;
+      } else {
+        console.warn("id is missing");
+        return false;
+      }
+    }
+  },
   data() {
     return {
       detailsAreVisible: false,
