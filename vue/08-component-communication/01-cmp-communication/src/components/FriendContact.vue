@@ -51,8 +51,8 @@ export default {
       default: false
     }
   },
-  // events: ["toggle-favorite"],
-  events: {
+  // emits: ["toggle-favorite"],
+  emits: {
     "toggle-favorite": function(id) {
       if (id) {
         return true;
