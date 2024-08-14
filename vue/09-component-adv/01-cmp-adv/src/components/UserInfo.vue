@@ -1,15 +1,18 @@
 <template>
   <section>
-    <div>
+    <base-card>
       <h3>{{ fullName }}</h3>
       <base-badge :type="role" :caption="role.toUpperCase()"></base-badge>
-    </div>
+    </base-card>
     <p>{{ infoText }}</p>
   </section>
 </template>
 
 <script>
+import BaseCard from "./BaseCard.vue";
+
 export default {
+  components: {BaseCard},
   props: ['fullName', 'infoText', 'role'],
 };
 </script>
