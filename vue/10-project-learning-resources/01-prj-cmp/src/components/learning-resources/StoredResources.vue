@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import LearningResource from "@/components/LearningResources/LearningResource.vue";
+import LearningResource from "@/components/learning-resources/LearningResource.vue";
 
 export default {
   name: "StoredResources",

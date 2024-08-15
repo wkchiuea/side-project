@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import StoredResources from "./components/LearningResources/StoredResources.vue";
+import StoredResources from "./components/learning-resources/StoredResources.vue";
 
 export default {
   name: "App",
