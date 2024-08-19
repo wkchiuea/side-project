@@ -21,10 +21,32 @@
 import SurveyResult from './SurveyResult.vue';
 
 export default {
-  props: ['results'],
+  // props: ['results'],
   components: {
     SurveyResult,
   },
+  data() {
+    return {
+      results: []
+    };
+  },
+  methods: {
+    getData() {
+      fetch("https://xxx.com/xxx.json")
+          .then(res => {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then(data => {
+            const results = [];
+            for (const item in data) {
+              results.push(item);
+            }
+            this.results = results;
+          });
+    }
+  }
 };
 </script>
 
