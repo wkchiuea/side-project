@@ -8,9 +8,10 @@ import UsersList from "./components/users/UsersList.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/teams", components: TeamsList },
-    { path: "/users", components: UsersList },
-  ]
+    { path: "/teams", component: TeamsList },
+    { path: "/users", component: UsersList },
+  ],
+  // linkActiveClass: "changeActiveClassName"
 });
 
 const app = createApp(App)
