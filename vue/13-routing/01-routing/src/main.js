@@ -17,10 +17,35 @@ const router = createRouter({
       children: [
         { name: "team-members", path: ":teamId", component: TeamMembers, props: true },
       ]},
-    { path: "/users", components: {default: UsersList, footer: UserFooter} },
+    { path: "/users", components: {default: UsersList, footer: UserFooter},
+      beforeEnter(to, from, next) {
+        next();
+      }
+    },
     { path: "/:notFound(.*)", redirect: "/teams" }
   ],
   // linkActiveClass: "changeActiveClassName"
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return {left: 0, top: 0};
+  }
+});
+
+router.beforeEach(function(to, from , next) {
+  next();
+  // next(false);
+  // next("/users");
+  // if (to.name === "team-members") {
+  //   next();
+  // } else {
+  //   next({name: "team-members", params: {teamId: "t2"}});
+  // }
+});
+
+router.afterEach(function(to, from) {
+  // sending analytics data to server
 });
 
 const app = createApp(App)
