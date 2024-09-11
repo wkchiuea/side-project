@@ -13,6 +13,7 @@ const router = createRouter({
   routes: [
     { path: "/", redirect: "/teams" },
     { path: "/teams", components: {default: TeamsList, footer: TeamsFooter},
+      meta: {needsAuth: true},
       name: "teams",
       children: [
         { name: "team-members", path: ":teamId", component: TeamMembers, props: true },
@@ -42,6 +43,9 @@ router.beforeEach(function(to, from , next) {
   // } else {
   //   next({name: "team-members", params: {teamId: "t2"}});
   // }
+  if (to.meta.needsAuth) {
+
+  }
 });
 
 router.afterEach(function(to, from) {
