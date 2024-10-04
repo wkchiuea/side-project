@@ -8,10 +8,10 @@ import {mapGetters} from "vuex";
 export default {
   name: "TheCounter",
   computed: {
-    // counter() {
-    //   return this.$store.getters.finalCounter;
-    // },
-    ...mapGetters(['finalCounter'])
+    counter() {
+      return this.$store.getters['numbers/normalizedCounter'];
+    },
+    // ...mapGetters('numbers', ['finalCounter'])
   },
 }
 </script>
