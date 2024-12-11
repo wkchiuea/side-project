@@ -32,3 +32,57 @@ SELECT COUNT(DISTINCT district) FROM address;
 SELECT DISTINCT district FROM address;
 SELECT COUNT(0) FROM film WHERE rating = 'R' AND replacement_cost BETWEEN 5 AND 15;
 SELECT COUNT(0) FROM film WHERE title LIKE '%Truman%';
+
+
+
+--
+--
+-- Section 3 : Group By
+--
+--
+SELECT MIN(replacement_cost),
+       MAX(replacement_cost),
+       ROUND(AVG(replacement_cost), 2),
+       SUM(replacement_cost),
+       COUNT(*)
+    FROM film;
+
+SELECT customer_id, SUM(amount) FROM payment
+    GROUP BY customer_id
+    ORDER BY SUM(amount);
+SELECT staff_id, customer_id, SUM(amount) FROM payment
+    GROUP BY staff_id, customer_id
+    HAVING SUM(amount) > 100;
+SELECT DATE(payment_date) FROM payment;
+
+-- Challenge
+SELECT staff_id, COUNT(*) FROM payment
+    GROUP BY staff_id;
+SELECT rating, AVG(replacement_cost) FROM film
+    GROUP BY rating;
+SELECT customer_id, SUM(amount) FROM payment
+    GROUP BY customer_id
+    ORDER BY SUM(amount) DESC
+    LIMIT 5;
+
+-- Assessment Test 1
+SELECT customer_id, SUM(amount) FROM payment
+    WHERE staff_id = 2
+    GROUP BY customer_id
+    HAVING SUM(amount) >= 110;
+SELECT COUNT(0) FROM film
+    WHERE title LIKE 'J%';
+SELECT * FROM customer
+    WHERE first_name LIKE 'E%' AND address_id < 500
+    ORDER BY customer_id DESC
+    LIMIT 1;
+
+
+
+--
+--
+-- Section 5 : JOINS
+--
+--
+
+
