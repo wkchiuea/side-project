@@ -84,5 +84,38 @@ SELECT * FROM customer
 -- Section 5 : JOINS
 --
 --
+SELECT customer_id, SUM(amount) AS total_spent FROM payment
+    GROUP BY customer_id
+    HAVING SUM(amount) > 100;
+
+SELECT * FROM payment
+    INNER JOIN customer ON payment.customer_id = customer.customer_id;
+SELECT * FROM payment
+    FULL OUTER JOIN customer ON payment.customer_id = customer.customer_id
+    WHERE customer.customer_id IS null OR payment.payment_id IS null;
+
+SELECT film.film_id, film.title, inventory.inventory_id FROM film
+    LEFT JOIN inventory ON inventory.film_id = film.film_id;
+SELECT film.film_id, film.title, inventory.inventory_id FROM film
+    LEFT JOIN inventory ON inventory.film_id = film.film_id
+    WHERE inventory.film_id IS null;
+SELECT film.film_id, film.title, inventory.inventory_id FROM film
+    RIGHT JOIN inventory ON inventory.film_id = film.film_id;
+
+-- Challenge
+SELECT first_name, last_name, district, email FROM customer
+    INNER JOIN address ON address.address_id = customer.address_id
+    WHERE district = 'California';
+SELECT title, first_name, last_name FROM actor
+    INNER JOIN film_actor ON film_actor.actor_id = actor.actor_id
+    INNER JOIN film ON film.film_id = film_actor.film_id
+    WHERE first_name = 'Nick' AND last_name = 'Wahlberg';
+
+
+SELECT * FROM address;
+SELECT * FROM customer;
+SELECT * FROM actor;
+SELECT * FROM film;
+SELECT * FROM film_actor;
 
 
