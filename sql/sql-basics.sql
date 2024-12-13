@@ -223,3 +223,83 @@ SELECT starttime FROM members
 
 
 
+--
+--
+-- Section 8 : Create DB and tables
+--
+--
+CREATE DATABASE learning;
+
+CREATE TABLE account (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(250) UNIQUE NOT NULL,
+    created_on TIMESTAMP NOT NULL,
+    last_login TIMESTAMP
+);
+
+CREATE TABLE job (
+    job_id SERIAL PRIMARY KEY,
+    job_name VARCHAR(200) UNIQUE NOT NULL
+);
+
+CREATE TABLE account_job(
+    user_id INTEGER REFERENCES account(user_id),
+    job_id INTEGER REFERENCES job(job_id),
+    hire_date TIMESTAMP
+);
+
+-- INSERT INTO tableA(xx, yy) SELECT col1, col2 FROM tableB WHERE condition;
+INSERT INTO account(username, password, email, created_on)
+    VALUES ('Haha', 'password', 'haha@gmail.com', CURRENT_TIMESTAMP);
+SELECT * FROM account;
+
+INSERT INTO job(job_name)
+    VALUES ('Astronaut'), ('President');
+SELECT * FROM job;
+
+INSERT INTO account_job(user_id, job_id, hire_date)
+    VALUES (1, 1, CURRENT_TIMESTAMP);
+SELECT * FROM account_job;
+
+-- UPDATE tableA SET original_col = tableB.new_col
+--      FROM tableB WHERE tableA.id = tableB.id;
+UPDATE account
+    SET last_login = created_on
+    WHERE user_id = 1
+    RETURNING user_id, last_login;
+UPDATE account_job
+    SET hire_date = account.created_on
+    FROM account
+    WHERE account_job.user_id = account.user_id;
+
+DELETE FROM job
+    WHERE job_name = 'Cowboy';
+-- DELETE FROM job
+--     USING tableB
+--     WHERE job.job_id = tableB.id
+
+ALTER TABLE job
+    RENAME TO new_info; -- RENAME COLUMN person TO perople
+ALTER TABLE job
+    ADD COLUMN new_col INT;
+ALTER TABLE job
+    DROP COLUMN new_col;
+ALTER TABLE job
+    ALTER COLUMN job_name SET DEFAULT 'HAHA'; -- SET NOT NULL, DROP DEFAULT, ADD CONSTRAINT constraint_name
+
+-- DROP will not remove those from views, triggers, stored procedures -> use CASCADE
+ALTER TABLE account
+    DROP COLUMN IF EXISTS email;
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    birthday DATE CHECK(birthday > '1900-01-01'),
+    hiredate DATE CHECK(hiredate > employees.birthday)
+);
+
+
+
+
