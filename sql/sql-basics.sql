@@ -302,4 +302,43 @@ CREATE TABLE employees (
 
 
 
+--
+--
+-- Section 10 : Conditionals and Procedures
+--
+--
+SELECT customer_id,
+    CASE
+        WHEN (customer_id <= 100) THEN 'Premium'
+        WHEN (customer_id BETWEEN 100 AND 200) THEN 'Plus'
+        ELSE 'Normal'
+    END AS customer_class
+FROM customer;
+SELECT customer_id,
+    CASE customer_id
+        WHEN 2 THEN 'Winner'
+        WHEN 5 THEN 'Second'
+        ELSE 'Normal'
+    END AS result
+FROM customer;
+
+SELECT COALESCE(rental_rate, 0) FROM film;
+
+SELECT CAST('5' AS INTEGER);
+SELECT '5'::INTEGER; -- psql
+SELECT CHAR_LENGTH(CAST(inventory_id AS VARCHAR)) FROM rental;
+SELECT NULLIF(10, 10);
+
+CREATE VIEW customer_info AS (
+SELECT first_name, last_name, address FROM customer
+    INNER JOIN address ON address.address_id = customer.address_id
+);
+CREATE OR REPLACE VIEW customer_info AS (
+SELECT first_name || ' ' || last_name AS name, address FROM customer
+    INNER JOIN address ON address.address_id = customer.address_id
+);
+DROP VIEW IF EXISTS customer_info;
+ALTER VIEW customer_info RENAME TO c_info;
+
+
 
