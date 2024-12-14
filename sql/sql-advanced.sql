@@ -62,3 +62,46 @@ SELECT a, b FROM fibonacci LIMIT 10;
 -- Section 3 : Window Functions
 --
 --
+SELECT
+    s.surgery_id,
+    p.full_name,
+    s.total_profit,
+    AVG(total_profit) OVER w as avg_total_profit,
+    s.total_cost,
+    SUM(total_cost) OVER w AS total_surgeon_cost
+FROM surgical_encounters s
+    LEFT JOIN physicians p ON s.surgeon_id = p.id
+WINDOW w AS (PARTITION BY s.surgeon_id);
+
+
+
+--
+--
+-- Section 4 : Advanced JOIN
+--
+--
+-- Cross JOIN : Cartesian Product
+SELECT
+    h.hospital_name,
+    d.department_name
+FROM hospitals h
+    CROSS JOIN departments d;
+
+-- USING, Natural JOINS
+SELECT h.hospital_name, d.department_name
+    FROM departments d
+    INNER JOIN hospitals h USING (hospital_id);
+SELECT h.hospital_name, d.department_name
+    FROM departments d
+    NATURAL JOIN hospitals h;
+
+
+
+--
+--
+-- Section 5 : Set Operation
+--
+--
+
+
+
