@@ -102,6 +102,59 @@ SELECT h.hospital_name, d.department_name
 -- Section 5 : Set Operation
 --
 --
+-- UNION: remove duplicate, UNION ALL: keep
+SELECT surgery_id
+    FROM surgical_encounters
+UNION
+SELECT surgery_id
+    FROM surgical_costs;
+
+SELECT surgery_id
+    FROM surgical_encounters
+INTERSECT
+SELECT surgery_id
+    FROM surgical_costs;
+
+SELECT surgery_id
+    FROM surgical_encounters
+EXCEPT
+SELECT surgery_id
+    FROM surgical_costs;
 
 
+
+--
+--
+-- Section 6 : Grouping Sets
+--
+--
+SELECT
+    state,
+    county,
+    COUNT(*) AS num_patients
+FROM patients
+    GROUP BY GROUPING SETS (
+        (state),
+        (state, county),
+        ()
+    )
+    ORDER BY state DESC, county;
+
+-- CUBE: generate all possible subset
+SELECT
+    state,
+    county,
+    COUNT(*) AS num_patients
+FROM patients
+    GROUP BY CUBE (state, county)
+    ORDER BY state DESC, county;
+
+-- ROLLUP: ordered and hierarchical
+SELECT
+    state,
+    county,
+    COUNT(*) AS num_patients
+FROM patients
+    GROUP BY ROLLUP (state, county)
+    ORDER BY state DESC, county;
 
