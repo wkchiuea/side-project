@@ -287,5 +287,131 @@ SELECT * FROM ONLY visit;
 
 
 
+--
+--
+-- Section 10 : Views
+--
+--
+CREATE OR REPLACE VIEW v_monthly_surgery_stats AS
+    SELECT
+        TO_CHAR(surgical_admission_date, 'YYYY-MM') AS year_month,
+        COUNT(surgery_id) AS num_surgeries,
+        SUM(total_cost) AS total_cost
+    FROM surgical_encounters
+    GROUP BY 1
+    ORDER BY 1;
 
+-- updatable view
+CREATE VIEW v_encounters_department_22100005 AS
+    SELECT
+        patient_encounter_id,
+        admitting_provider_id,
+        department_id,
+        patient_in_icu_flag
+    FROM encounters
+    WHERE department_id = '22100005';
+    --WITH CHECK OPTION;
+
+-- Materialized View
+CREATE MATERIALIZED VIEW v_monthly_surgery_stats AS
+    SELECT
+        TO_CHAR(surgical_admission_date, 'YYYY-MM') AS year_month,
+        COUNT(surgery_id) AS num_surgeries,
+        SUM(total_cost) AS total_cost
+    FROM surgical_encounters
+    GROUP BY 1
+    ORDER BY 1
+    WITH NO DATA;
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY v_monthly_surgery_stats;
+
+-- Recursive View
+CREATE RECURSIVE VIEW v_fibonacci(a, b) AS
+    SELECT 1 AS a, 1 AS b
+    UNION ALL
+    SELECT b, a+b
+    FROM v_fibonacci
+    WHERE b < 200;
+
+
+
+--
+--
+-- Section 11 : Functions
+--
+--
+CREATE FUNCTION f_test_function(a INT, b INT)
+    RETURNS INT
+    LANGUAGE sql
+    AS
+    'SELECT $1 + $2;';
+SELECT f_test_function(1, 2);
+
+CREATE FUNCTION f_plpgsql_function(a INT, b INT)
+    RETURNS INT
+    AS
+    $$
+    BEGIN
+        RETURN a + b;
+    END;
+    $$
+    LANGUAGE plpgsql;
+SELECT f_plpgsql_function(a=>1, b=>2);
+
+SELECT * FROM information_schema.routines WHERE routine_schema = 'general_hospital';
+
+
+
+--
+--
+-- Section 12 : Stored Procedures
+--
+--
+CREATE PROCEDURE sp_test_procedure()
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        DROP TABLE IF EXISTS general_hospital.test_table;
+        CREATE TABLE general_hospital.test_table (
+            id INT
+        );
+        COMMIT;
+    END
+    $$;
+CALL sp_test_procedure();
+SELECT * FROM information_schema.routines WHERE routine_schema = 'general_hospital' AND routine_type = 'PROCEDURE';
+SELECT routine_definition FROM information_schema.routines WHERE routine_schema = 'general_hospital' AND routine_type = 'PROCEDURE';
+
+
+
+--
+--
+-- Section 13 : Trigger
+--
+--
+-- kicked off by other operations - INSERT, UPDATE, DELETE, TRUNCATE
+CREATE FUNCTION f_trigger_function()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        IF NEW.last_name IS NULL OR NEW.first_name IS NULL THEN
+            RAISE EXCEPTION 'Name cannot be null';
+        ELSE
+            NEW.first_name = TRIM(NEW.first_name);
+            NEW.last_name = TRIM(NEW.last_name);
+            return NEW;
+        END IF;
+    END;
+    $$;
+
+CREATE TRIGGER tr_clean_physician_name
+    BEFORE INSERT
+    ON physicians
+    FOR EACH ROW
+        EXECUTE PROCEDURE f_trigger_function();
+ALTER TABLE physicians
+    DISABLE TRIGGER tr_clean_physician_name;
+ALTER TABLE physicians
+    ENABLE TRIGGER ALL;
 
