@@ -415,3 +415,34 @@ ALTER TABLE physicians
 ALTER TABLE physicians
     ENABLE TRIGGER ALL;
 
+
+
+--
+--
+-- Section 14 : Useful Methods
+--
+--
+-- EXPLAIN / EXPLAIN ANALYZE
+EXPLAIN ANALYZE
+SELECT
+    s.surgery_id,
+    p.full_name,
+    s.total_profit,
+    AVG(total_profit) OVER w as avg_total_profit,
+    s.total_cost,
+    SUM(total_cost) OVER w AS total_surgeon_cost
+FROM surgical_encounters s
+    LEFT JOIN physicians p ON s.surgeon_id = p.id
+WINDOW w AS (PARTITION BY s.surgeon_id);
+
+-- TRUNCATE
+BEGIN;
+TRUNCATE test_table;
+ROLLBACK;
+END;
+
+-- EXPORT, IMPORT Data
+COPY physicians TO '/tmp/physicians.csv'
+    WITH DELIMITER ',' CSV HEADER;
+COPY test_table FROM '/tmp/physicians.csv'
+    WITH DELIMITER ',' CSV HEADER;
