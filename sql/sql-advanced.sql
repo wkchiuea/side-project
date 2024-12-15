@@ -158,3 +158,134 @@ FROM patients
     GROUP BY ROLLUP (state, county)
     ORDER BY state DESC, county;
 
+
+
+--
+--
+-- Section 7 : Schema Structures and Table Relationships
+--
+--
+-- Information Schema
+SELECT * FROM information_schema.tables WHERE table_schema = 'general_hospital';
+
+-- COMMENT
+COMMENT ON TABLE general_hospital.vitals IS 'Patient Vital sign data';
+COMMENT ON COLUMN general_hospital.vitals.bmi IS 'BMI';
+SELECT COL_DESCRIPTION('general_hospital.accounts'::regclass, 1);
+
+
+
+--
+--
+-- Section 8 : Transactions
+--
+--
+BEGIN TRANSACTION;
+UPDATE physicians
+    SET first_name = 'Bill',
+        full_name = CONCAT(last_name, ', Bill')
+    WHERE id = 1;
+-- ROLLBACK;
+END TRANSACTION; -- or COMMIT TRANSACTION
+
+
+BEGIN TRANSACTION;
+UPDATE vitals
+    SET bp_diastolic = 120
+    WHERE patient_encounter_id = 2570046;
+SAVEPOINT vitals_updated;
+
+UPDATE accounts
+    SET total_account_balance = 1000
+    WHERE account_id = 111111;
+ROLLBACK TO vitals_updated;
+RELEASE SAVEPOINT vitals_updated;
+COMMIT TRANSACTION;
+
+-- Database Lock
+BEGIN;
+LOCK TABLE physicians;
+
+END;
+
+
+
+--
+--
+-- Section 9 : Table Inheritance and Partitioning
+--
+--
+-- Range Partitioning
+CREATE TABLE surgical_encounters_partitioned (
+    surgery_id INTEGER NOT NULL,
+    master_patient_id INTEGER NOT NULL,
+    surgical_admission_date DATE NOT NULL,
+    surgical_discharge_date DATE
+) PARTITION BY RANGE(surgical_admission_date);
+CREATE TABLE surgical_encounters_y2016
+    PARTITION OF surgical_encounters_partitioned
+    FOR VALUES FROM ('2016-01-01') TO ('2017-01-01');
+CREATE TABLE surgical_encounters_y2017
+    PARTITION OF surgical_encounters_partitioned
+    FOR VALUES FROM ('2017-01-01') TO ('2018-01-01');
+CREATE TABLE surgical_encounters_default
+    PARTITION OF surgical_encounters_partitioned
+    DEFAULT;
+
+-- List Partitioning
+CREATE TABLE departments_partitioned (
+    hospital_id INTEGER NOT NULL,
+    department_id INTEGER NOT NULL,
+    department_name TEXT,
+    specialty_description TEXT
+) PARTITION BY LIST(hospital_id);
+CREATE TABLE departments_h111000
+    PARTITION OF departments_partitioned
+    FOR VALUES IN (111000);
+CREATE TABLE departments_h112000
+    PARTITION OF departments_partitioned
+    FOR VALUES IN (112000);
+CREATE TABLE departments_default
+    PARTITION OF departments_partitioned
+    DEFAULT;
+
+-- Hash Partitioning
+CREATE TABLE orders_procedures_partitioned (
+    order_procedure_id INT NOT NULL,
+    patient_encounter_id INT NOT NULL,
+    ordering_provider_id INT REFERENCES physicians(id),
+    order_cd TEXT,
+    order_procedure_description TEXT
+) PARTITION BY HASH(order_procedure_id, patient_encounter_id);
+CREATE TABLE orders_procedure_hash0
+    PARTITION OF orders_procedures_partitioned
+    FOR VALUES WITH (MODULUS 3, REMAINDER 0);
+CREATE TABLE orders_procedure_hash1
+    PARTITION OF orders_procedures_partitioned
+    FOR VALUES WITH (MODULUS 3, REMAINDER 1);
+CREATE TABLE orders_procedure_hash2
+    PARTITION OF orders_procedures_partitioned
+    FOR VALUES WITH (MODULUS 3, REMAINDER 2);
+
+-- Table Inheritance
+CREATE TABLE visit (
+    id SERIAL NOT NULL PRIMARY KEY,
+    start_datetime TIMESTAMP,
+    end_datetime TIMESTAMP
+);
+CREATE TABLE emergency_visit (
+    emergency_department_id INT NOT NULL,
+    triage_level INT,
+    triage_datetime TIMESTAMP
+) INHERITS (visit);
+
+INSERT INTO emergency_visit VALUES
+    (DEFAULT, '2022-01-01 12:00:00', NULL, 12, 3, NULL);
+INSERT INTO visit VALUES
+    (DEFAULT, '2022-03-01 12:00:00', NULL);
+SELECT * FROM ONLY visit;
+
+
+
+
+
